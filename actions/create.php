@@ -1,30 +1,30 @@
-<?php
-header('Content-Type: application/json');
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+    <?php
+    header('Content-Type: application/json');
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
 
-echo "Procesando formulario...<bcr>";
-echo "Acción no permitida";
-require '../db/config.php';
+    require '../db/config.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $nombre    = $_POST['nombre'];
-    $email     = $_POST['email'];
-    $telefono  = $_POST['telefono'];
-    $direccion = $_POST['direccion'];
-    $ciudad    = $_POST['ciudad'];
-    $pais      = $_POST['pais'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nombre = $_POST['nombre'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $telefono = $_POST['telefono'] ?? '';
+        $direccion = $_POST['direccion'] ?? '';
+        $ciudad = $_POST['ciudad'] ?? '';
+        $ocupacion = $_POST['ocupacion'] ?? '';
 
-    $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, telefono, direccion, ciudad, pais) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssss", $nombre, $email, $telefono, $direccion, $ciudad, $pais);
+        $query = "INSERT INTO personas (nombre, email, telefono, direccion, ciudad, ocupacion)
+                VALUES (?, ?, ?, ?, ?, ?)";
 
-    if ($stmt->execute()) {
-        echo "OK";
+        try {
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$nombre, $email, $telefono, $direccion, $ciudad, $ocupacion]);
+
+            echo json_encode(['success' => true, 'message' => 'Usuario guardado correctamente']);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error al guardar', 'error' => $e->getMessage()]);
+        }
     } else {
-        echo "Error: " . $stmt->error;
+        echo json_encode(['success' => false, 'message' => 'Método no permitido']);
     }
-
-    $stmt->close();
-    $conn->close();
-}
-?>
+    ?>

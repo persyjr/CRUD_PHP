@@ -12,9 +12,9 @@ function cargarDatos() {
                     <td>${persona.nombre}</td>
                     <td>${persona.email}</td>
                     <td>${persona.telefono}</td>
+                    <td>${persona.direccion}</td>
                     <td>${persona.ciudad}</td>
-                    <td>${persona.profesion}</td>
-                    <td>${persona.edad}</td>
+                    <td>${persona.ocupacion}</td>
                     <td>
                         <button onclick='editar(${JSON.stringify(persona)})'>Editar</button>
                         <button onclick='eliminar(${persona.id})'>Eliminar</button>
@@ -22,15 +22,20 @@ function cargarDatos() {
                 `;
                 tabla.appendChild(fila);
             });
-        });
+        })
+        .catch(error => console.error("Error al cargar datos:", error));
 }
 
 function eliminar(id) {
     if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+
     fetch("actions/delete.php", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id })
-    }).then(() => cargarDatos());
+    })
+    .then(() => cargarDatos())
+    .catch(error => console.error("Error al eliminar:", error));
 }
 
 function editar(persona) {
@@ -44,27 +49,24 @@ function editar(persona) {
 document.getElementById("formulario").addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const formData = {
-        id: document.getElementById("id").value || null,
-        nombre: document.getElementById("nombre").value,
-        email: document.getElementById("email").value,
-        telefono: document.getElementById("telefono").value,
-        ciudad: document.getElementById("ciudad").value,
-        profesion: document.getElementById("profesion").value,
-        edad: document.getElementById("edad").value,
-    };
+    const formData = new FormData(this);
 
-    const url = formData.id ? "actions/update.php" : "actions/create.php";
+    const isUpdate = formData.get("id");
+
+    const url = isUpdate ? "actions/update.php" : "actions/create.php";
 
     fetch(url, {
         method: "POST",
-        body: JSON.stringify(formData)
-    }).then(() => {
-        document.getElementById("formulario").reset();
+        body: formData
+    })
+    .then(res => res.json())
+    .then(res => {
+        alert(res.message);
+        this.reset();
         document.getElementById("id").value = "";
         cargarDatos();
-    });
+    })
+    .catch(error => console.error("Error al guardar:", error));
 });
 
-setInterval(cargarDatos, 4000); // recarga cada 4 segundos
 window.onload = cargarDatos;
