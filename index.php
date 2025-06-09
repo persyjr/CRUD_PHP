@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Formulario CRUD</h1>
-    <form id="formulario">
+    <form id="formulario" method="POST" action="actions/create.php">
         <input type="hidden" id="id">
         <input type="text" id="nombre" placeholder="Nombre" required><br>
         <input type="email" id="email" placeholder="Email" required><br>

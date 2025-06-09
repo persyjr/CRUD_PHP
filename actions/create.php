@@ -1,16 +1,29 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+echo "Procesando formulario...<bcr>";
+echo "Acción no permitida";
 require '../db/config.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $nombre    = $_POST['nombre'];
+    $email     = $_POST['email'];
+    $telefono  = $_POST['telefono'];
+    $direccion = $_POST['direccion'];
+    $ciudad    = $_POST['ciudad'];
+    $pais      = $_POST['pais'];
 
-$sql = "INSERT INTO personas (nombre, email, telefono, ciudad, profesion, edad) VALUES (?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->execute([
-    $data['nombre'],
-    $data['email'],
-    $data['telefono'],
-    $data['ciudad'],
-    $data['profesion'],
-    $data['edad']
-]);
-echo "Registro guardado.";
+    $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, telefono, direccion, ciudad, pais) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssss", $nombre, $email, $telefono, $direccion, $ciudad, $pais);
+
+    if ($stmt->execute()) {
+        echo "OK";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
