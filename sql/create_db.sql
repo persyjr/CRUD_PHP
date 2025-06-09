@@ -10,3 +10,4 @@ CREATE TABLE IF NOT EXISTS personas (
     profesion VARCHAR(50),
     edad INT
 );
+GRANT ALL PRIVILEGES ON crud_php.* TO 'admin'@'localhost';

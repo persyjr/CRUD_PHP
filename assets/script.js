@@ -16,8 +16,8 @@ function cargarDatos() {
                     <td>${persona.ciudad}</td>
                     <td>${persona.ocupacion}</td>
                     <td>
-                        <button onclick='editar(${JSON.stringify(persona)})'>Editar</button>
-                        <button onclick='eliminar(${persona.id})'>Eliminar</button>
+                        <button onclick='editar(${JSON.stringify(persona)})' class="w-100 btn btn-primary">Editar</button>
+                        <button onclick='eliminar(${persona.id})'  class="w-100 btn btn-danger">Eliminar</button>
                     </td>
                 `;
                 tabla.appendChild(fila);
